@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>An “insider” perspective on (some) methodological and statistical pitfalls in the analysis of electrophysiological data for cognitive neuroscience</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Antonio Maffei, PhD" />
+    <script src="libs/header-attrs-2.7/header-attrs.js"></script>
+    <link rel="stylesheet" href="defaultv2.css" type="text/css" />
+    <link rel="stylesheet" href="defaultv2-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# An “insider” perspective on (some) methodological and statistical pitfalls in the analysis of electrophysiological data for cognitive neuroscience
+### Antonio Maffei, PhD
+### Padova Neuroscience Center
+### 30/04/2021
+
+---
+
+
+
+
+class: middle
+
+.pull-left[
+&lt;img src='image-1.jpg' width='350'/&gt;
+]
+--
+.pull-right[
+## Si, ma: 
+
+- Proverò a darvi un'idea su quei problemi che non sono facilmente identificabili se non si è "esperti"
+
+- Cercherò di darvi la mia prospettiva sul perchè non dovreste **mai fidarvi** di un elettrofisiologo
+
+- Proverò a condividere con voi un paio di possibili soluzioni
+]
+
+---
+
+class: center, middle
+
+# Let's start then!
+
+---
+# Un pò di storia
+
+- 2009: Neural correlates of interspecies perspective taking in the post-mortem Atlantic Salmon:
+An argument for multiple comparisons correction (Bennett et al., OHBM)
+
+- 2016: Cluster failure: Why fMRI inferences for spatial extent
+have inflated false-positive rates (Eklund et al., PNAS)
+
+- 2020: Variability in the analysis of a single neuroimaging dataset by many teams (Botvinik-Nezer et al., Nature)
+
+--
+.center[
+&lt;img src='image-2.jpg' width='350'/&gt;
+]
+---
+
+La (quasi) totalità del dibattito intorno ai problemi metodologici/statistici nelle neuroscienze sta riguardando l'**fMRI**.  
+
+  
+--
+I motivi sono tanti (e a me non del tutto chiari):
+
+- Elevata visibilità delle ricerche fMRI --&gt; potenziale impatto?
+- Elevato costo --&gt; evitare lo spreco di fondi?
+- Relativa standardizzazione della tecnica (l'unità di analisi è una sequenza di immagini di dimensioni standard tra studi)  
+
+
+--
+Al tempo stesso un terzo delle ricerche nelle neuroscienze cognitive usano tecniche elettrofisiologiche
+
+&lt;img src="PsicoStat_talk_files/figure-html/TEC-1.png" width="45%" height="45%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# EEG in a nutshell
+
+.middle[
+.pull-left[
+![*](image-17.jpg)]
+]
+
+.pull-right[
+Le dimensioni di indagine sono:
+
+- Spazio
+- Tempo
+- Frequenza  
+]
+
+.center[
+###Ciò che rende questa tecnica estremamente flessibile è anche il motivo per cui è molto difficile sviluppare _pipelines_ di analisi standardizzate
+]
+
+
+---
+# Preprocessing: Where the magic happens
+L'elemento più delicato di un qualsiasi studio EEG/ERP/MEG è il preprocessing, ovvero quella sequenza di operazioni che consentono di passare dal tracciato _grezzo_ al dato di interesse che verrà utilizzato per la statistica
+
+.center[
+&lt;img src='image-3.gif' style="width: 50%"/&gt;]
+
+--
+.left[
+In generale, il preprocessing consiste _almeno_ nelle seguenti operazioni:
+
+- Filtering
+- Segmentazione del tracciato continuo in epoche di interesse
+- &lt;span style="background-color: yellow;"&gt; Detezione e rimozione/correzione di artefatti&lt;/span&gt;
+]
+.center[
+Di quanti tipi di artefatti dobbiamo preoccuparci?
+]
+
+---
+# Fantastic artifacts and where to find them
+
+Gli artefatti più comuni che caratterizzano un tracciato elettroencefalografico sono:
+.pull-left[
+- Movimenti oculari (blinks e saccadi)
+- Tensione muscolare (&gt; 20 Hz)
+- Artefatto di rete (50 Hz)
+]
+.pull-right[
+- Potenziali evocati &lt;span style="font-size: 30px"&gt; &amp;#9760; &lt;/span&gt;
+- Analisi in (tempo-)frequenza &lt;span style="font-size: 30px"&gt; &amp;#9760; &lt;/span&gt;
+]
+
+--
+.center[### How to deal with them?]
+- Approcci multivariati (i.e. PCA, ICA) per identificare componenti **stabili** e **stereotipiche**
+- Criteri basati sull'ampiezza del segnale (i.e. se - _soglia_ mV &lt; A &lt; _soglia_ mV scarta l'epoca)
+- **Ispezione visiva**
+
+---
+# Fantastic artifacts and where to find them
+
+.center[
+&lt;img src='image-5.png' style="width: 100%"/&gt;]
+
+---
+# The _hidden_ variability
+Sebbene gli strumenti per gestire e contenere gli artefatti in un tracciato EEG esistano, vengono utilizzati lasciando **un'ampia discrezionalità al _data analyst_**
+
+- Quali componenti ICA sono da rimuovere e quali sono da conservare?
+- Quale soglia mi consente di identificare tutte le epoche contaminate?
+
+Nella stragrande maggioranza dei casi queste scelte sono *arbitrarie* e frutto della consuetudine/esperienza  
+
+
+--
+La logica dietro le scelte compiute durante il preprocessing non solo non viene giustificata, ma nemmeno riportata negli articoli
+
+.center[
+&lt;img src='image-6.png' style="width: 70%;border: 5px solid #555"/&gt;]
+
+---
+# STANDARDIZE, STANDARDIZE, STANDARDIZE!
+Sulla scia di quanto accaduto nel mondo del neuroimaging, negli ultimi anni c'è una crescente spinta a sviluppare _pipeline_ analitiche:
+
+- Standardizzate
+- Riproducibili
+- &lt;span style="background-color: yellow;"&gt;Scalabili&lt;/span&gt;
+- &lt;span style="background-color: yellow;"&gt;Armonizzate&lt;/span&gt;  
+
+
+--
+Con la maggiore accessibilità di sistemi ad alta densità (&gt;100 canali) e la spinta a raccogliere dataset di grandi dimensioni (n &gt; 100), un approccio dipendente da scelte soggettive è **semplicemente impossibile da applicare**
+
+--
+### Alcuni esempi
+- [PREP pipeline](https://doi.org/10.3389/fninf.2015.00016)
+- [ICLabel](https://doi.org/10.1016/j.neuroimage.2019.05.026)
+- [Automagic](https://doi.org/10.1016/j.neuroimage.2019.06.046)
+
+---
+# STANDARDIZE, STANDARDIZE, STANDARDIZE!
+
+.pull-left[
+&lt;img src='image-7.png' style="width: 100%"/&gt;
+]
+
+.pull-right[
+&lt;img src='image-8.png' style="width: 100%"/&gt;
+]
+
+---
+class: center, middle
+
+&lt;img src='image-9.jpg' style="width: 90%"/&gt;
+
+.footnote[
+C.R.A.P. = Commonly Recorded Artifactual Potentials (quoted from Steven Luck)
+]
+---
+# Stats: the less _hidden_ variability
+
+.left-square[
+Selezione degli elettrodi
+&lt;img src='image-10.png' style= "width: 70%"/&gt;
+]
+
+.right-square[
+Selezione delle finestre temporali
+&lt;img src='image-11.jpg' style= "width: 70%"/&gt;
+]
+
+.left-square[
+Flessibilità nella scelta di cosa analizzare  
+&lt;img src='image-12.jpg' style= "width: 70%"/&gt;
+]
+
+.right-square[
+Utilizzo di complicati disegni fattoriali*  
+
+&lt;img src='image-13.jpg' style= "width: 150%: position: center"/&gt;
+
+&lt;span style="font-size: 50%"&gt;[*Luck, S.J. &amp; Gaspelin, N. (2017). How to Get Statistically Significant Effects in Any ERP Experiment (and Why You Shouldn’t)](https://dx.doi.org/10.1111%2Fpsyp.12639)&lt;/span&gt;
+]
+
+---
+## Stats: a better non-parametrical approach
+.center[
+&lt;img src='image-14.jpg' width="100%" height="100%"/&gt;
+]
+
+---
+## Stats: a better non-parametrical approach
+
+Un approccio di tipo _mass-univariate_ non parametrico è da preferire, perchè:
+
+- Meno dipendente da scelte soggettive
+- Non poggia su assunzioni (quasi) mai rispettate
+- Penalizza effetti piccoli e isolati
+- Magnifica effetti distribuiti e robusti
+
+--
+.center[
+### Eh ma il mio è un disegno fattoriale, come faccio?  
+]
+
+--
+.center[
+Questo tipo di approccio è estendibile a qualsiasi statistica test si scelga e ai disegni fattoriali 3x3x3x3x3x3x3x3x3x3....
+
+[Factorial Mass Univariate Toolbox](https://github.com/ericcfields/FMUT)
+]
+---
+## How to fix the situation? Can it be fixed at all?
+
+Allo stato attuale, la gigantesca variabilità nelle procedure di analisi di dati elettrofisiologici, rende il panorama dei risultati pubblicati quantomeno dubbio
+
+.pull-left[
+&lt;img src='image-15.png'/&gt;
+
+Ha come scopo provare a replicare 27 "classici" della letteratura EEG/ERP  
+Ogni studio proverà ad essere replicato in almeno 3 gruppi di ricerca indipendente  
+
+Status: Iniziato nel 2020
+]
+
+.pull-right[
+###\#EEGManyPipelines
+
+Ha come scopo di quantificare la variabilità nelle procedure di analisi tra gruppi di ricerca diversi e studiarne l'impatto sul risultato finale  
+
+Status: In fase di preparazione e reclutamento dei team di analisi
+]
+
+---
+## How to fix the situation? Can it be fixed at all?
+
+Ridefinire il modo con cui queste tecniche vengono studiate ed insegnate
+
+Fondamenti di algebra lineare e signal processing sono **essenziali** non solo per *usare* queste tecniche ma anche semplicemente per *capire* i lavori che se ne servono e giudicarne la qualità ed il valore
+
+
+.center[
+###Non è solo un titolo _fancy_ per un articolo!!!
+
+&lt;img src='image-16.png' style="border: 5px solid #555"/&gt;
+]
+
+---
+
+class: center, middle
+
+# Thanks!
+###(and never trust an electrophysiologist)
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
